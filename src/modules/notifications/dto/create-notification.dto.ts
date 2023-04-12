@@ -1,10 +1,25 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayUnique, IsDefined, IsMongoId, IsString } from 'class-validator';
+import { ArrayUnique, IsDefined, IsMongoId, IsNotEmpty, IsString, MaxLength, MinLength, ValidateNested } from 'class-validator';
+
+class ExtraDto {
+  @ApiProperty()
+  @IsDefined()
+  @IsNotEmpty()
+  @IsString()
+  key: string;
+
+  @ApiProperty()
+  @IsDefined()
+  @IsString()
+  @IsNotEmpty()
+  value: string;
+}
 
 export class CreateNotificationDto {
   @ApiProperty({
-    description: 'ID of the user associated with the notification',
-    example: '615de15d6a18fae2e225f703',
+    description: "The ID of the user that the notification is for",
+    type: String,
+    example: "6154c8f222dedb4d402f84a0"
   })
   @IsDefined()
   @IsString()
@@ -12,26 +27,42 @@ export class CreateNotificationDto {
   user: string;
 
   @ApiProperty({
-    description: 'ID of the device associated with the notification',
-    example: '615de15d6a18fae2e225f704',
+    description: "The message of the notification",
+    type: String,
+    example: "Your order has shipped!"
+  })
+  @IsDefined()
+  @IsString()
+  @MinLength(3)
+  @MaxLength(256)
+  message: string;
+
+  @ApiProperty({
+    description: "The description of the notification",
+    type: String,
+    example: "Your order #123456 has shipped!"
+  })
+  @IsDefined()
+  @IsString()
+  @MinLength(3)
+  @MaxLength(256)
+  description: string;
+
+  @ApiProperty({
+    description: "The ID of the business service associated with the notification",
+    type: String,
+    example: "6154c8f222dedb4d402f84a1"
   })
   @IsDefined()
   @IsString()
   @IsMongoId()
-  device: string;
+  businessService: string;
 
   @ApiProperty({
-    description:
-      'Array of business service IDs associated with the notification',
-    example: ['615de15d6a18fae2e225f705', '615de15d6a18fae2e225f706'],
+    type: [ExtraDto]
   })
   @IsDefined()
-  @IsString({
-    each: true,
-  })
-  @IsMongoId({
-    each: true,
-  })
-  @ArrayUnique()
-  businessServices: string[];
+  @IsNotEmpty()
+  @ValidateNested({ each: true })
+  extra: ExtraDto[];
 }

@@ -37,12 +37,9 @@ export class UsersService {
   }
 
   async update(_id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    const user = new this.usersModel(updateUserDto);
-    if(updateUserDto.password)
-      user.passwordHash = bcrypt.hashSync(updateUserDto.password);
     await this.findOne(_id);
     if (
-      (await this.usersModel.updateOne({ _id }, user)).modifiedCount ==
+      (await this.usersModel.updateOne({ _id }, updateUserDto)).modifiedCount ==
       0
     )
       throw new ForbiddenException('user not modified');

@@ -6,6 +6,7 @@ import {
   BusinessService,
   BusinessServiceSchema,
 } from './entities/business-service.entity';
+import { BusinessGroupsModule } from '../business-groups/business-groups.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import {
         schema: BusinessServiceSchema,
       },
     ]),
+    BusinessGroupsModule
   ],
   controllers: [BusinessServicesController],
   providers: [BusinessServicesService],

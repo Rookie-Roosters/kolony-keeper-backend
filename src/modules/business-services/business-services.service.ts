@@ -7,6 +7,7 @@ import {
 } from './entities/business-service.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { BusinessServicesByBusinessGroup } from './dto/business-services-by-business-group.dto';
 
 @Injectable()
 export class BusinessServicesService {
@@ -26,6 +27,43 @@ export class BusinessServicesService {
 
   async findAll(): Promise<BusinessService[]> {
     return await this.businessServicesModel.find();
+  }
+
+  async findAllAndGroupByBusinessGroup(): Promise<
+    BusinessServicesByBusinessGroup[]
+  > {
+    return (await this.businessServicesModel.aggregate([
+      {
+        $lookup: {
+          from: 'businessgroups',
+          localField: 'businessGroup',
+          foreignField: '_id',
+          as: 'businessGroup',
+        },
+      },
+      {
+        $project: {
+          _id: '$_id',
+          name: '$name',
+          status: '$status',
+          businessGroup: { $arrayElemAt: ['$businessGroup', 0] },
+        },
+      },
+      {
+        $group: {
+          _id: '$businessGroup._id',
+          name: { $first: '$businessGroup.name' },
+          tags: { $first: '$businessGroup.tags' },
+          businessServices: {
+            $push: {
+              _id: '$_id',
+              name: '$name',
+              status: '$status',
+            },
+          },
+        },
+      },
+    ])) as BusinessServicesByBusinessGroup[];
   }
 
   async findOne(_id: string): Promise<BusinessService> {

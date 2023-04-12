@@ -10,6 +10,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { BusinessGroupsModule } from './modules/business-groups/business-groups.module';
 import { AuthModule } from './integrations/auth/auth.module';
 import { AuthMiddleware } from './integrations/auth/auth.middleware';
+import { AlertsModule } from './modules/alerts/alerts.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AuthMiddleware } from './integrations/auth/auth.middleware';
     BusinessGroupsModule,
     BusinessServicesModule,
     IncidentsModule,
+    AlertsModule,
   ],
   controllers: [],
   providers: [],
