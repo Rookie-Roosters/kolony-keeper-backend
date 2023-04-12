@@ -8,7 +8,7 @@ export class User {
   @ApiProperty()
   _id: string;
 
-  @ApiProperty({})
+  @ApiProperty()
   @Prop({
     type: String,
     length: 256,

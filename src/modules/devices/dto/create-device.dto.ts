@@ -1,30 +1,44 @@
+import { IsDefined, IsEnum, IsMongoId, IsString, MaxLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
+import { DevicePlatform } from '../entities/device.entity';
 
 export class CreateDeviceDto {
-  @ApiProperty()
+  @ApiProperty({
+    description: 'User ID associated with the device',
+    example: '615de15d6a18fae2e225f703',
+  })
+  @IsDefined()
+  @IsString()
+  @IsMongoId()
   user: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Device name',
+    example: 'iPhone 12',
+  })
+  @IsDefined()
+  @IsString()
   name: string;
 
   @ApiProperty({
-    type: Number,
-    enum: [
-      'IOS',
-      'ANDROID',
-      'WEB',
-      'WINDOWS',
-      'MACOS',
-      'LINUX',
-      'EMAIL',
-      'SMS',
-    ],
+    description: 'Device platform',
+    enum: DevicePlatform,
+    enumName: 'Platform',
+    example: DevicePlatform.IOS,
   })
-  platform: number;
+  @IsDefined()
+  @IsEnum(DevicePlatform)
+  platform: DevicePlatform;
 
   @ApiProperty({
-    type: String,
+    description: 'Device token',
+    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9',
     maxLength: 256,
   })
+  @IsDefined()
+  @IsString()
+  @MaxLength(256)
+  @Transform(({ value }) => value.trim())
   token: string;
 }

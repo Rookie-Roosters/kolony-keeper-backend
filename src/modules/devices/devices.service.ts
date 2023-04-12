@@ -1,26 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import { CreateDeviceDto } from './dto/create-device.dto';
 import { UpdateDeviceDto } from './dto/update-device.dto';
+import { Device, DeviceDocument } from './entities/device.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class DevicesService {
-  create(createDeviceDto: CreateDeviceDto) {
-    return 'This action adds a new device';
+  constructor(
+    @InjectModel(Device.name) private devicesModel: Model<DeviceDocument>
+  ) {}
+
+  async create(createDeviceDto: CreateDeviceDto) : Promise<Device> {
+    const device = new this.devicesModel(createDeviceDto);
+    return await device.save();
   }
 
-  findAll() {
-    return `This action returns all devices`;
+  async findAll() : Promise<Device[]> {
+    return await this.devicesModel.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} device`;
+  async findOne(_id: string) : Promise<Device> {
+    const device = await this.devicesModel.findOne({ _id });
+    if (!device) throw new ForbiddenException('device not found');
+    return device;
   }
 
-  update(id: number, updateDeviceDto: UpdateDeviceDto) {
-    return `This action updates a #${id} device`;
+  async update(_id: string, updateDeviceDto: UpdateDeviceDto) : Promise<Device> {
+    await this.findOne(_id);
+    if (
+      (await this.devicesModel.updateOne({ _id }, updateDeviceDto)).modifiedCount ==
+      0
+    )
+      throw new ForbiddenException('device not modified');
+    return await this.findOne(_id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} device`;
+  async remove(_id: string) : Promise<boolean> {
+    await this.findOne(_id);
+    if ((await this.devicesModel.deleteOne({ _id })).deletedCount == 0)
+      throw new ForbiddenException('device not delete');
+    return true;
   }
 }
