@@ -1,26 +1,61 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import { CreateBusinessServiceDto } from './dto/create-business-service.dto';
 import { UpdateBusinessServiceDto } from './dto/update-business-service.dto';
+import {
+  BusinessService,
+  BusinessServiceDocument,
+} from './entities/business-service.entity';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class BusinessServicesService {
-  create(createBusinessServiceDto: CreateBusinessServiceDto) {
-    return 'This action adds a new businessService';
+  constructor(
+    @InjectModel(BusinessService.name)
+    private businessServicesModel: Model<BusinessServiceDocument>,
+  ) {}
+
+  async create(
+    createBusinessServiceDto: CreateBusinessServiceDto,
+  ): Promise<BusinessService> {
+    const businessService = new this.businessServicesModel(
+      createBusinessServiceDto,
+    );
+    return await businessService.save();
   }
 
-  findAll() {
-    return `This action returns all businessServices`;
+  async findAll(): Promise<BusinessService[]> {
+    return await this.businessServicesModel.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} businessService`;
+  async findOne(_id: string): Promise<BusinessService> {
+    const businessService = await this.businessServicesModel.findOne({ _id });
+    if (!businessService)
+      throw new ForbiddenException('businessService not found');
+    return businessService;
   }
 
-  update(id: number, updateBusinessServiceDto: UpdateBusinessServiceDto) {
-    return `This action updates a #${id} businessService`;
+  async update(
+    _id: string,
+    updateBusinessServiceDto: UpdateBusinessServiceDto,
+  ): Promise<BusinessService> {
+    await this.findOne(_id);
+    if (
+      (
+        await this.businessServicesModel.updateOne(
+          { _id },
+          updateBusinessServiceDto,
+        )
+      ).modifiedCount == 0
+    )
+      throw new ForbiddenException('businessService not modified');
+    return await this.findOne(_id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} businessService`;
+  async remove(_id: string): Promise<boolean> {
+    await this.findOne(_id);
+    if ((await this.businessServicesModel.deleteOne({ _id })).deletedCount == 0)
+      throw new ForbiddenException('businessService not delete');
+    return true;
   }
 }

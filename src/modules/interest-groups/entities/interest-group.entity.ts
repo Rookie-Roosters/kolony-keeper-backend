@@ -27,13 +27,6 @@ export class InterestGroup {
 
   @ApiProperty()
   @Prop({
-    type: String,
-    required: false,
-  })
-  icon?: string;
-
-  @ApiProperty()
-  @Prop({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'BusinessService' }],
   })
   businessServices: BusinessService[];
