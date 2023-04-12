@@ -4,6 +4,7 @@ import { UpdateNotificationDto } from './dto/update-notification.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { NotificationDocument, Notification } from './entities/notification.entity';
 import { Model } from 'mongoose';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class NotificationsService {
@@ -11,8 +12,9 @@ export class NotificationsService {
     @InjectModel(Notification.name) private notificationsModel: Model<NotificationDocument>,
   ) {}
 
-  async create(createNotificationDto: CreateNotificationDto): Promise<Notification> {
-    const notification = new this.notificationsModel(createNotificationDto);
+  async create(createNotificationDto: CreateNotificationDto, user: User): Promise<Notification> {
+    const notification = new this.notificationsModel(createNotificationDto) as any;
+    notification.user = user._id;
     return await notification.save();
   }
 
@@ -22,7 +24,7 @@ export class NotificationsService {
 
   async findOne(_id: string): Promise<Notification> {
     const notification = await this.notificationsModel.findOne({ _id });
-    if (!notification) throw new ForbiddenException('notification not found');
+    if (!notification) throw new ForbiddenException(`notification with the _id ${_id} not found`);
     return notification;
   }
 

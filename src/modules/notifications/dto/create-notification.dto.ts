@@ -17,16 +17,6 @@ class ExtraDto {
 
 export class CreateNotificationDto {
   @ApiProperty({
-    description: "The ID of the user that the notification is for",
-    type: String,
-    example: "6154c8f222dedb4d402f84a0"
-  })
-  @IsDefined()
-  @IsString()
-  @IsMongoId()
-  user: string;
-
-  @ApiProperty({
     description: "The message of the notification",
     type: String,
     example: "Your order has shipped!"

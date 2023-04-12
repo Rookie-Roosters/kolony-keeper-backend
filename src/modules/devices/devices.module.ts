@@ -3,6 +3,7 @@ import { DevicesService } from './devices.service';
 import { DevicesController } from './devices.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Device, DeviceSchema } from './entities/device.entity';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
@@ -11,7 +12,8 @@ import { Device, DeviceSchema } from './entities/device.entity';
         name: Device.name,
         schema: DeviceSchema
       }
-    ])
+    ]),
+    UsersModule,
   ],
   controllers: [DevicesController],
   providers: [DevicesService],

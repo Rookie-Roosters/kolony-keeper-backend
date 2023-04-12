@@ -6,6 +6,7 @@ import {
   InterestGroup,
   InterestGroupSchema,
 } from './entities/interest-group.entity';
+import { BusinessServicesModule } from '../business-services/business-services.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import {
         schema: InterestGroupSchema,
       },
     ]),
+    BusinessServicesModule,
   ],
   controllers: [InterestGroupsController],
   providers: [InterestGroupsService],

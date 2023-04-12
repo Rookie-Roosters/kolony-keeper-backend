@@ -4,6 +4,7 @@ import { UpdateDeviceDto } from './dto/update-device.dto';
 import { Device, DeviceDocument } from './entities/device.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class DevicesService {
@@ -11,8 +12,9 @@ export class DevicesService {
     @InjectModel(Device.name) private devicesModel: Model<DeviceDocument>
   ) {}
 
-  async create(createDeviceDto: CreateDeviceDto) : Promise<Device> {
-    const device = new this.devicesModel(createDeviceDto);
+  async create(createDeviceDto: CreateDeviceDto, user: User) : Promise<Device> {
+    const device = new this.devicesModel(createDeviceDto) as any;
+    device.user = user._id;
     return await device.save();
   }
 
@@ -22,7 +24,7 @@ export class DevicesService {
 
   async findOne(_id: string) : Promise<Device> {
     const device = await this.devicesModel.findOne({ _id });
-    if (!device) throw new ForbiddenException('device not found');
+    if (!device) throw new ForbiddenException(`device with the _id ${_id} not found`);
     return device;
   }
 

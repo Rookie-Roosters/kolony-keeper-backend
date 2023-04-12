@@ -9,8 +9,8 @@ import { IncidentsModule } from './modules/incidents/incidents.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { BusinessGroupsModule } from './modules/business-groups/business-groups.module';
 import { AuthModule } from './integrations/auth/auth.module';
-import { AuthMiddleware } from './integrations/auth/auth.middleware';
 import { AlertsModule } from './modules/alerts/alerts.module';
+import { AuthMiddleware } from './integrations/auth/auth.middleware';
 
 @Module({
   imports: [
@@ -35,12 +35,8 @@ import { AlertsModule } from './modules/alerts/alerts.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    /*consumer
+    consumer
       .apply(AuthMiddleware)
-      .exclude(
-        { path: '/api/auth/log-in', method: RequestMethod.POST },
-        { path: '/api/users', method: RequestMethod.POST }
-      )
-      .forRoutes({ path: '*', method: RequestMethod.ALL });*/
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }

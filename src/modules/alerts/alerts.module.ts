@@ -3,6 +3,8 @@ import { AlertsService } from './alerts.service';
 import { AlertsController } from './alerts.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Alert, AlertSchema } from './entities/alert.entity';
+import { BusinessServicesModule } from '../business-services/business-services.module';
+import { DevicesModule } from '../devices/devices.module';
 
 @Module({
   imports: [
@@ -12,6 +14,8 @@ import { Alert, AlertSchema } from './entities/alert.entity';
         schema: AlertSchema,
       },
     ]),
+    BusinessServicesModule,
+    DevicesModule,
   ],
   controllers: [AlertsController],
   providers: [AlertsService],

@@ -7,6 +7,9 @@ export class AuthMiddleware implements NestMiddleware {
   constructor(private authService: AuthService) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
+    if (req.path === '/api/auth/log-in' || (req.path === '/api/users' && req.method == 'POST' )) {
+      return next();
+    }
     if (/^\/api\//.test(req.originalUrl)) {
       const bearerToken = req.headers.authorization as undefined | string;
       const token = !!bearerToken ? bearerToken.replace('Bearer ', '') : null;

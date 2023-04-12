@@ -1,14 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { AlertsService } from './alerts.service';
 import { CreateAlertDto } from './dto/create-alert.dto';
 import { UpdateAlertDto } from './dto/update-alert.dto';
-import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Alert } from './entities/alert.entity';
+import { BusinessServicesService } from '../business-services/business-services.service';
+import { DevicesService } from '../devices/devices.service';
 
 @ApiTags('Alerts')
 @Controller('alerts')
 export class AlertsController {
-  constructor(private readonly alertsService: AlertsService) {}
+  constructor(
+    private readonly alertsService: AlertsService,
+    private readonly businessServicesService: BusinessServicesService,
+    private readonly devicesService: DevicesService
+  ) {}
 
   @Post()
   @ApiOperation({
@@ -19,6 +41,12 @@ export class AlertsController {
   @ApiBody({ type: CreateAlertDto })
   @ApiCreatedResponse({ type: Alert })
   async create(@Body() createAlertDto: CreateAlertDto): Promise<Alert> {
+    for(let businessServiceId of createAlertDto.businessServices) {
+      await this.businessServicesService.findOne(businessServiceId)
+    }
+    for(let deviceId of createAlertDto.devices) {
+      await this.alertsService.findOne(deviceId)
+    }
     return await this.alertsService.create(createAlertDto);
   }
 
@@ -57,6 +85,12 @@ export class AlertsController {
     @Param('_id') _id: string,
     @Body() updateAlertDto: UpdateAlertDto,
   ): Promise<Alert> {
+    for(let businessServiceId of updateAlertDto.businessServices) {
+      await this.businessServicesService.findOne(businessServiceId)
+    }
+    for(let deviceId of updateAlertDto.devices) {
+      await this.alertsService.findOne(deviceId)
+    }
     return await this.alertsService.update(_id, updateAlertDto);
   }
 
@@ -70,5 +104,17 @@ export class AlertsController {
   @ApiOkResponse({ type: Boolean })
   async remove(@Param('_id') _id: string): Promise<boolean> {
     return await this.alertsService.remove(_id);
+  }
+
+  @Get(':token/:title/:body')
+  @ApiParam({ name: 'token', type: String })
+  @ApiParam({ name: 'title', type: String })
+  @ApiParam({ name: 'body', type: String })
+  async sendNotification(
+    @Param('token') token: string,
+    @Param('title') title: string,
+    @Param('body') body: string,
+  ) {
+    await this.alertsService.sendNotification(token, title, body);
   }
 }

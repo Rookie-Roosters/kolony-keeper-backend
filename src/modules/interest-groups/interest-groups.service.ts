@@ -4,6 +4,7 @@ import { UpdateInterestGroupDto } from './dto/update-interest-group.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { InterestGroup, InterestGroupDocument } from './entities/interest-group.entity';
 import { Model } from 'mongoose';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class InterestGroupsService {
@@ -11,8 +12,9 @@ export class InterestGroupsService {
     @InjectModel(InterestGroup.name) private interestGroupsModel: Model<InterestGroupDocument>
   ) {}
 
-  async create(createInterestGroupDto: CreateInterestGroupDto) : Promise<InterestGroup> {
-    const interestGroup = new this.interestGroupsModel(createInterestGroupDto);
+  async create(createInterestGroupDto: CreateInterestGroupDto, user: User) : Promise<InterestGroup> {
+    const interestGroup = new this.interestGroupsModel(createInterestGroupDto) as any;
+    interestGroup.user = user._id;
     return await interestGroup.save();
   }
 
@@ -22,7 +24,7 @@ export class InterestGroupsService {
 
   async findOne(_id: string) : Promise<InterestGroup> {
     const interestGroup = await this.interestGroupsModel.findOne({ _id });
-    if (!interestGroup) throw new ForbiddenException('interestGroup not found');
+    if (!interestGroup) throw new ForbiddenException(`interest group with the _id ${_id} not found`);
     return interestGroup;
   }
 

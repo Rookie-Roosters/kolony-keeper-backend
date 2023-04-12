@@ -47,15 +47,15 @@ export class UsersController {
     return await this.usersService.findAll();
   }
 
-  @Get(':id')
+  @Get(':_id')
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get a user by ID',
     description: 'Retrieve a user by their ID',
   })
   @ApiOkResponse({ type: User })
-  async findOne(@Param('id') id: string): Promise<User> {
-    return this.usersService.findOne(id);
+  async findOne(@Param('_id') _id: string): Promise<User> {
+    return this.usersService.findOne(_id);
   }
 
   @Patch(':id')
@@ -67,10 +67,10 @@ export class UsersController {
   @ApiBody({ type: UpdateUserDto })
   @ApiOkResponse({ type: User })
   async update(
-    @Param('id') id: string,
+    @Param('_id') _id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    return await this.usersService.update(id, updateUserDto);
+    return await this.usersService.update(_id, updateUserDto);
   }
 
   @Delete(':id')
@@ -80,7 +80,7 @@ export class UsersController {
     description: 'Delete a user based on their ID',
   })
   @ApiOkResponse({ type: Boolean })
-  async remove(@Param('id') id: string): Promise<boolean> {
-    return await this.usersService.remove(id);
+  async remove(@Param('_id') _id: string): Promise<boolean> {
+    return await this.usersService.remove(_id);
   }
 }

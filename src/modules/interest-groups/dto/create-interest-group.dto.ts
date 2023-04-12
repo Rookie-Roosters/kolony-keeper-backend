@@ -10,14 +10,6 @@ import {
 } from 'class-validator';
 
 export class CreateInterestGroupDto {
-  @ApiProperty({
-    description: 'ID of the user associated with the notification',
-    example: '615de15d6a18fae2e225f703',
-  })
-  @IsDefined()
-  @IsString()
-  @IsMongoId()
-  user: string;
 
   @ApiProperty({
     description: 'Name of the interest group',

@@ -6,6 +6,7 @@ import {
   NotificationSchema,
 } from './entities/notification.entity';
 import { MongooseModule } from '@nestjs/mongoose';
+import { BusinessServicesModule } from '../business-services/business-services.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { MongooseModule } from '@nestjs/mongoose';
         schema: NotificationSchema,
       },
     ]),
+    BusinessServicesModule,
   ],
   controllers: [NotificationsController],
   providers: [NotificationsService],

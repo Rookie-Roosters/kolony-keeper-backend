@@ -1,25 +1,53 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { InterestGroupsService } from './interest-groups.service';
 import { CreateInterestGroupDto } from './dto/create-interest-group.dto';
 import { UpdateInterestGroupDto } from './dto/update-interest-group.dto';
-import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { InterestGroup } from './entities/interest-group.entity';
+import { BusinessServicesService } from '../business-services/business-services.service';
+import { CurrentUser } from 'src/integrations/auth/auth.decorator';
+import { User } from '../users/entities/user.entity';
 
 @ApiTags('InterestGroups')
 @Controller('interest-groups')
 export class InterestGroupsController {
-  constructor(private readonly interestGroupsService: InterestGroupsService) {}
+  constructor(
+    private readonly interestGroupsService: InterestGroupsService,
+    private readonly businessServicesService: BusinessServicesService,
+  ) {}
 
   @Post()
   @ApiOperation({
     summary: 'Create a interestGroup',
-    description: 'Creates a new interestGroup and returns the created interestGroup',
+    description:
+      'Creates a new interestGroup and returns the created interestGroup',
   })
   @ApiBearerAuth()
   @ApiBody({ type: CreateInterestGroupDto })
   @ApiCreatedResponse({ type: InterestGroup })
-  async create(@Body() createInterestGroupDto: CreateInterestGroupDto): Promise<InterestGroup> {
-    return await this.interestGroupsService.create(createInterestGroupDto);
+  async create(
+    @Body() createInterestGroupDto: CreateInterestGroupDto,
+    @CurrentUser() user: User
+  ): Promise<InterestGroup> {
+    for(let businessServiceId of createInterestGroupDto.businessServices) {
+      await this.businessServicesService.findOne(businessServiceId);
+    }
+    return await this.interestGroupsService.create(createInterestGroupDto, user);
   }
 
   @Get()
@@ -57,6 +85,9 @@ export class InterestGroupsController {
     @Param('_id') _id: string,
     @Body() updateInterestGroupDto: UpdateInterestGroupDto,
   ): Promise<InterestGroup> {
+    for(let businessServiceId of updateInterestGroupDto.businessServices) {
+      await this.businessServicesService.findOne(businessServiceId);
+    }
     return await this.interestGroupsService.update(_id, updateInterestGroupDto);
   }
 

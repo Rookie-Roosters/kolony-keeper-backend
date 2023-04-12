@@ -8,6 +8,7 @@ import {
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { BusinessServicesByBusinessGroup } from './dto/business-services-by-business-group.dto';
+import { BusinessGroupsService } from '../business-groups/business-groups.service';
 
 @Injectable()
 export class BusinessServicesService {
@@ -69,7 +70,7 @@ export class BusinessServicesService {
   async findOne(_id: string): Promise<BusinessService> {
     const businessService = await this.businessServicesModel.findOne({ _id });
     if (!businessService)
-      throw new ForbiddenException('businessService not found');
+      throw new ForbiddenException(`business service with the _id ${_id} not found`);
     return businessService;
   }
 

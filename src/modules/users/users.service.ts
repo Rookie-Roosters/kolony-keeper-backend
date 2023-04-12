@@ -24,7 +24,7 @@ export class UsersService {
 
   async findOne(_id: string): Promise<User> {
     const user = await this.usersModel.findOne({ _id });
-    if (!user) throw new ForbiddenException('user not found');
+    if (!user) throw new ForbiddenException(`user with the _id ${_id} not found`);
     user.passwordHash = undefined;
     return user;
   }

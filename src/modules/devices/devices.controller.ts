@@ -19,6 +19,8 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { User } from '../users/entities/user.entity';
+import { CurrentUser } from 'src/integrations/auth/auth.decorator';
 
 @ApiTags('Devices')
 @Controller('devices')
@@ -33,8 +35,8 @@ export class DevicesController {
   @ApiBearerAuth()
   @ApiBody({ type: CreateDeviceDto })
   @ApiCreatedResponse({ type: Device })
-  async create(@Body() createDeviceDto: CreateDeviceDto): Promise<Device> {
-    return await this.devicesService.create(createDeviceDto);
+  async create(@Body() createDeviceDto: CreateDeviceDto, @CurrentUser() user: User): Promise<Device> {
+    return await this.devicesService.create(createDeviceDto, user);
   }
 
   @Get()
@@ -59,7 +61,7 @@ export class DevicesController {
     return await this.devicesService.findOne(_id);
   }
 
-  @Patch(':_id')
+  /*@Patch(':_id')
   @ApiOperation({
     summary: 'Update a device by ID',
     description:
@@ -73,7 +75,7 @@ export class DevicesController {
     @Body() updateDeviceDto: UpdateDeviceDto,
   ): Promise<Device> {
     return await this.devicesService.update(_id, updateDeviceDto);
-  }
+  }*/
 
   @Delete(':_id')
   @ApiOperation({

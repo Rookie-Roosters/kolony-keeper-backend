@@ -22,7 +22,8 @@ export class IncidentsService {
 
   async findOne(_id: string): Promise<Incident> {
     const incident = await this.incidentsModel.findOne({ _id });
-    if (!incident) throw new ForbiddenException('incident not found');
+    if (!incident)
+      throw new ForbiddenException(`incident with the _id ${_id} not found`);
     return incident;
   }
 

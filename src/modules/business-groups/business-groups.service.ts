@@ -28,7 +28,7 @@ export class BusinessGroupsService {
 
   async findOne(_id: string): Promise<BusinessGroup> {
     const businessGroup = await this.businessGroupsModel.findOne({ _id });
-    if (!businessGroup) throw new ForbiddenException('businessGroup not found');
+    if (!businessGroup) throw new ForbiddenException(`business group with the _id ${_id} not found`);
     return businessGroup;
   }
 

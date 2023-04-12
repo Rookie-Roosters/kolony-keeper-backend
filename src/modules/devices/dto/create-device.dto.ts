@@ -5,15 +5,6 @@ import { DevicePlatform } from '../entities/device.entity';
 
 export class CreateDeviceDto {
   @ApiProperty({
-    description: 'User ID associated with the device',
-    example: '615de15d6a18fae2e225f703',
-  })
-  @IsDefined()
-  @IsString()
-  @IsMongoId()
-  user: string;
-
-  @ApiProperty({
     description: 'Device name',
     example: 'iPhone 12',
   })
