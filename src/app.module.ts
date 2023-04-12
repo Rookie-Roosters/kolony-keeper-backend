@@ -17,7 +17,7 @@ import { AuthMiddleware } from './integrations/auth/auth.middleware';
       isGlobal: true,
     }),
     MongooseModule.forRoot(
-      `mongodb://${process.env.DATABASE_URL}/${process.env.DATABASE_NAME}`,
+      process.env.MONGODB_CONNECTION_STRING,
     ),
     AuthModule,
     UsersModule,
