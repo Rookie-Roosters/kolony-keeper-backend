@@ -16,7 +16,8 @@ import {
   ApiCreatedResponse,
   ApiOperation,
   ApiTags,
-  ApiOkResponse
+  ApiOkResponse,
+  ApiBearerAuth
 } from '@nestjs/swagger';
 
 @ApiTags('Users')
@@ -36,6 +37,7 @@ export class UsersController {
   }
 
   @Get()
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get all users',
     description: 'Retrieve a list of all users',
@@ -46,6 +48,7 @@ export class UsersController {
   }
 
   @Get(':id')
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get a user by ID',
     description: 'Retrieve a user by their ID',
@@ -56,6 +59,7 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Update a user',
     description: 'Update a user based on their ID and the provided data',
@@ -70,6 +74,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Delete a user',
     description: 'Delete a user based on their ID',

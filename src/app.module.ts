@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, RequestMethod, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './modules/users/users.module';
@@ -8,6 +8,8 @@ import { BusinessServicesModule } from './modules/business-services/business-ser
 import { IncidentsModule } from './modules/incidents/incidents.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { BusinessGroupsModule } from './modules/business-groups/business-groups.module';
+import { AuthModule } from './integrations/auth/auth.module';
+import { AuthMiddleware } from './integrations/auth/auth.middleware';
 
 @Module({
   imports: [
@@ -17,6 +19,7 @@ import { BusinessGroupsModule } from './modules/business-groups/business-groups.
     MongooseModule.forRoot(
       `mongodb://${process.env.DATABASE_URL}/${process.env.DATABASE_NAME}`,
     ),
+    AuthModule,
     UsersModule,
     DevicesModule,
     NotificationsModule,
@@ -28,4 +31,14 @@ import { BusinessGroupsModule } from './modules/business-groups/business-groups.
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    /*consumer
+      .apply(AuthMiddleware)
+      .exclude(
+        { path: '/api/auth/log-in', method: RequestMethod.POST },
+        { path: '/api/users', method: RequestMethod.POST }
+      )
+      .forRoutes({ path: '*', method: RequestMethod.ALL });*/
+  }
+}
